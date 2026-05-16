@@ -14,9 +14,9 @@ public class UserController {
     @Autowired
     UserService service;
 
-    @GetMapping("/{id}")
-    public ResponseEntity getUserById(@PathVariable Integer id){
-        return ResponseEntity.ok(service.getUser(id));
+    @GetMapping
+    public ResponseEntity getAll(){
+        return ResponseEntity.ok(service.getAllUsers());
     }
     @PostMapping
     public ResponseEntity createUser(@RequestBody UserDto dto){
