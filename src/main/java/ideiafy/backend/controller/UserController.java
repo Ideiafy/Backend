@@ -1,5 +1,6 @@
 package ideiafy.backend.controller;
 
+import ideiafy.backend.dto.LoginDto;
 import ideiafy.backend.dto.UserDto;
 import ideiafy.backend.model.User;
 import ideiafy.backend.service.UserService;
@@ -30,5 +31,9 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity putUser( @PathVariable Integer id, @RequestBody UserDto dto){
         return ResponseEntity.ok(service.putUser(id,dto));
+    }
+    @PostMapping("/login")
+    public ResponseEntity Login(@RequestBody LoginDto dto){
+        return ResponseEntity.ok(service.Login(dto));
     }
 }
