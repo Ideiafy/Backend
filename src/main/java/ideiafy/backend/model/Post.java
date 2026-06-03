@@ -1,6 +1,5 @@
 package ideiafy.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,26 +10,21 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "posts")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    @Column(nullable = false)
-    private String password;
-
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private List<Post> Posts;
-
-
+    private String title;
+    private String description;
+    private String comment;
+    private List<String> images;
 }
