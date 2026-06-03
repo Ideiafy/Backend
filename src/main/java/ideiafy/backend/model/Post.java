@@ -20,11 +20,16 @@ public class Post {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(
+            name = "user_id",
+            nullable = false
+    )
     private User user;
 
     private String title;
     private String description;
-    private String comment;
+    @ElementCollection
+    private List<String> comment;
+    @ElementCollection
     private List<String> images;
 }

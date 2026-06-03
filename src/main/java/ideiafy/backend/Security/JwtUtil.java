@@ -18,17 +18,17 @@ public class JwtUtil {
                 .sign(Algorithm.HMAC256(SECRET));
     }
 
-//    public static Integer getUserId(String token) {
-//        try {
-//            return JWT.require(Algorithm.HMAC256(SECRET))
-//                    .build()
-//                    .verify(token)
-//                    .getClaim("id")
-//                    .asInt();
-//        } catch (Exception e) {
-//            System.out.println("Invalid Token" + e.getMessage());
-//            return null;
-//        }
-//    }
+    public static Integer getUserId(String token) {
+        try {
+            return JWT.require(Algorithm.HMAC256(SECRET))
+                    .build()
+                    .verify(token)
+                    .getClaim("id")
+                    .asInt();
+        } catch (Exception e) {
+            System.out.println("Invalid Token" + e.getMessage());
+            return null;
+        }
+    }
 
 }

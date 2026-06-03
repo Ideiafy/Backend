@@ -30,7 +30,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
-    private List<Post> Posts;
+    private List<Post> posts;
 
 
 }
