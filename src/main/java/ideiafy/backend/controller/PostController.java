@@ -15,11 +15,20 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity getPost(){
-        return ResponseEntity.ok(service.getPost());
+        return ResponseEntity.ok(service.getMyPosts());
+    }
+    @GetMapping("/feed")
+    public ResponseEntity getFeed(){
+        return ResponseEntity.ok(service.getFeed());
     }
     @PostMapping
     public ResponseEntity createPost(@RequestBody PostDto dto){
         return ResponseEntity.ok(service.createPost(dto));
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity putPost(@PathVariable Integer id,
+                                  @RequestBody PostDto dto){
+        return ResponseEntity.ok(service.putPost(id,dto));
     }
     @DeleteMapping("/{id}")
     public ResponseEntity deletePost(@PathVariable Integer id){
