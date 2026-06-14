@@ -2,12 +2,16 @@ package ideiafy.backend.service;
 
 import ideiafy.backend.Repository.UserRepository;
 import ideiafy.backend.Security.JwtUtil;
-import ideiafy.backend.dto.LoginDto;
-import ideiafy.backend.dto.UserDto;
+import ideiafy.backend.Security.SecurityUtils;
+import ideiafy.backend.Inputs.ChangePasswordInput;
+import ideiafy.backend.Inputs.LoginInput;
+import ideiafy.backend.Inputs.UserInput;
 import ideiafy.backend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -22,41 +26,57 @@ public class UserService {
     public List<User> getAllUsers(){
         return repository.findAll();
     }
-    public User createUser(UserDto dto){
-        return repository.save(toEntity(dto));
+    public User getMyUser(){
+        User user = repository.findById(SecurityUtils.getAuthenticationUserId()).orElseThrow(()->
+                new RuntimeException("User not found"));
+        return user;
     }
-    public void deleteUserById(Integer id){
-        repository.deleteById(id);
-    }
-    public User putUser(Integer id,UserDto dto){
-        User user = repository.findById(id).orElseThrow();
-        updateEntity(user, dto);
-        return repository.save(user);
-    }
+    public User createUser(UserInput input){
+        User userExists = repository.findByEmail(input.email());
 
-    public User toEntity(UserDto dto){
-        return User.builder()
-                .name(dto.name())
-                .email(dto.email())
-                .password(encoder.encode(dto.password()))
-                .build();
-    }
-    public void updateEntity(User user, UserDto dto){
-        user.setName(dto.name());
-        user.setEmail(dto.email());
-        user.setPassword(encoder.encode(dto.password()));
-    }
+        if(userExists != null){
+            throw new RuntimeException("Email Already registered");
+        }
 
-    public String Login(LoginDto dto){
-        User user = repository.findByEmail(dto.email());
+        return repository.save(toEntity(input));
+    }
+    public void deleteUser(){
+        User user = repository.findById(SecurityUtils.getAuthenticationUserId()).orElseThrow(()->
+                new RuntimeException("User not found"));
+
+        repository.delete(user);
+    }
+    public void changePassword(ChangePasswordInput input){
+        User user = repository.findById(SecurityUtils.getAuthenticationUserId()).orElseThrow(()->
+                new RuntimeException("User not found"));
+        if(!encoder.matches(input.oldPassword(), user.getPassword())){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                    "Wrong Password"
+            );
+        }
+        user.setPassword(encoder.encode(input.newPassword()));
+        repository.save(user);
+    }
+    public String login(LoginInput input){
+        User user = repository.findByEmail(input.email());
 
         if(user == null){
             throw new RuntimeException("User not found");
         }
-        if(!encoder.matches(dto.password(), user.getPassword())){
-            throw new RuntimeException("Wrong Password");
+        if(!encoder.matches(input.password(), user.getPassword())){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
+                    "Wrong Password"
+            );
         }
         return JwtUtil.generateToken(user.getId(),user.getEmail());
+    }
+
+    private User toEntity(UserInput input){
+        return User.builder()
+                .name(input.name())
+                .email(input.email())
+                .password(encoder.encode(input.password()))
+                .build();
     }
 
 }

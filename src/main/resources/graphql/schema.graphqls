@@ -1,0 +1,62 @@
+type User {
+    id: ID!
+    name: String!
+    email: String!
+}
+
+type Post {
+    id: ID!
+    title: String
+    description: String
+    comment: [String]
+    images: [String]
+    user: User
+}
+
+input UserInput {
+    name: String!
+    email: String!
+    password: String!
+}
+
+input LoginInput {
+    email: String!
+    password: String!
+}
+
+input ChangePasswordInput {
+    oldPassword: String!
+    newPassword: String!
+}
+
+input PostInput {
+    title: String!
+    description: String
+    comment: [String]
+    images: [String]
+}
+
+type Query {
+    user: User
+    users: [User]
+
+    myPosts: [Post]
+    posts: [Post]
+}
+
+type Mutation {
+    createUser(input: UserInput!): User
+    login(input: LoginInput!): String
+
+    updateUser(input: ChangePasswordInput!): Boolean
+    deleteUser: Boolean
+
+    createPost(input: PostInput!): Post
+    updatePost(
+        id: ID!
+        input: PostInput!
+    ): Post
+    deletePost(
+        id: ID!
+    ): Boolean
+}
