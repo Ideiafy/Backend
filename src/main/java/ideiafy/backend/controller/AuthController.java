@@ -1,25 +1,27 @@
 package ideiafy.backend.controller;
 
-import ideiafy.backend.dto.LoginDto;
-import ideiafy.backend.dto.UserDto;
+import ideiafy.backend.Inputs.LoginInput;
+import ideiafy.backend.Inputs.UserInput;
+import ideiafy.backend.model.User;
 import ideiafy.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
 
-@RestController
-@RequestMapping("/auth")
+@Controller
 public class AuthController {
     @Autowired
     UserService service;
 
-    @PostMapping("/register")
-    public ResponseEntity createUser(@RequestBody UserDto dto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.createUser(dto));
+    @MutationMapping
+    public User createUser(@Argument UserInput input){
+        return service.createUser(input);
     }
-    @PostMapping("/login")
-    public ResponseEntity Login(@RequestBody LoginDto dto){
-        return ResponseEntity.ok(service.Login(dto));
+    @MutationMapping
+    public String login(@Argument LoginInput input){
+        return service.login(input);
     }
 }

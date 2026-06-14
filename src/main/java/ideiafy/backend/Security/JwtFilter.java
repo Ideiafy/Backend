@@ -23,14 +23,17 @@ public class JwtFilter extends OncePerRequestFilter {
                     String token = authHeader.substring(7);
                     Integer userid = JwtUtil.getUserId(token);
 
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    userid,
-                                    null,
-                                    Collections.emptyList()
-                            );
-                    SecurityContextHolder.getContext()
-                            .setAuthentication(authentication);
+                    if(userid != null){
+                        UsernamePasswordAuthenticationToken authentication =
+                                new UsernamePasswordAuthenticationToken(
+                                        userid,
+                                        null,
+                                        Collections.emptyList()
+                                );
+                        SecurityContextHolder.getContext()
+                                .setAuthentication(authentication);
+                    }
+
                 }
                 filterChain.doFilter(request, response);
             }

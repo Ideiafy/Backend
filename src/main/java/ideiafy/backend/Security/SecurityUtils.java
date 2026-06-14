@@ -8,7 +8,7 @@ public class SecurityUtils {
         Authentication auth = SecurityContextHolder
                 .getContext()
                 .getAuthentication();
-        if(auth == null){
+        if(auth == null || auth.getPrincipal() == null){
             throw new RuntimeException("Invalid token");
         }
         return (Integer) auth.getPrincipal();

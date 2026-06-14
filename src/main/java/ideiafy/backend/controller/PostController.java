@@ -1,38 +1,44 @@
 package ideiafy.backend.controller;
 
-import ideiafy.backend.dto.PostDto;
+import ideiafy.backend.Inputs.PostInput;
+import ideiafy.backend.model.Post;
 import ideiafy.backend.service.PostsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
 
-@RestController
-@RequestMapping("/posts")
+import java.util.List;
+
+@Controller
 public class PostController {
     @Autowired
     PostsService service;
 
-    @GetMapping
-    public ResponseEntity getPost(){
-        return ResponseEntity.ok(service.getMyPosts());
+    @QueryMapping
+    public List<Post> myPosts(){
+        return service.getMyPosts();
     }
-    @GetMapping("/feed")
-    public ResponseEntity getFeed(){
-        return ResponseEntity.ok(service.getFeed());
+    @QueryMapping
+    public List<Post> posts(){
+        return service.getFeed();
     }
-    @PostMapping
-    public ResponseEntity createPost(@RequestBody PostDto dto){
-        return ResponseEntity.ok(service.createPost(dto));
+
+    @MutationMapping
+    public Post createPost(@Argument PostInput input){
+        return service.createPost(input);
     }
-    @PutMapping("/{id}")
-    public ResponseEntity putPost(@PathVariable Integer id,
-                                  @RequestBody PostDto dto){
-        return ResponseEntity.ok(service.putPost(id,dto));
+    @MutationMapping
+    public Post updatePost(@Argument Integer id,
+                        @Argument PostInput input){
+        return service.updatePost(id,input);
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity deletePost(@PathVariable Integer id){
+    @MutationMapping
+    public Boolean deletePost(@Argument Integer id){
         service.deletePost(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Post was deleted");
+        return true;
     }
 }

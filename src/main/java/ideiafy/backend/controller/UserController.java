@@ -1,33 +1,37 @@
 package ideiafy.backend.controller;
 
-import ideiafy.backend.dto.ChangePasswordDto;
+import ideiafy.backend.Inputs.ChangePasswordInput;
+import ideiafy.backend.model.User;
 import ideiafy.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.stereotype.Controller;
 
-@RestController
-@RequestMapping("/users")
+import java.util.List;
+
+@Controller
 public class UserController {
     @Autowired
     UserService service;
 
-    @GetMapping
-    public ResponseEntity getAll(){
-        return ResponseEntity.ok(service.getAllUsers());
+    @QueryMapping
+    public List<User> users(){
+        return service.getAllUsers();
     }
-    @GetMapping("/me")
-    public ResponseEntity getMyUser(){
-        return ResponseEntity.ok(service.getMyUser());
+    @QueryMapping
+    public User user(){
+        return service.getMyUser();
     }
-    @PutMapping("/me/password")
-    public ResponseEntity<Void> putUser(@RequestBody ChangePasswordDto dto){
-        service.changePassword(dto);
-        return ResponseEntity.noContent().build();
+    @MutationMapping
+    public Boolean updateUser(@Argument ChangePasswordInput input){
+        service.changePassword(input);
+        return true;
     }
-    @DeleteMapping("/me")
-    public ResponseEntity<Void> deleteUser(){
+    @MutationMapping
+    public Boolean deleteUser(){
         service.deleteUser();
-        return ResponseEntity.noContent().build();
+        return true;
     }
 }
