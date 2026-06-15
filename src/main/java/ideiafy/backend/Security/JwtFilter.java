@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.UUID;
 
 public class JwtFilter extends OncePerRequestFilter {
     @Override
@@ -21,7 +22,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 if(authHeader != null && authHeader.startsWith("Bearer ")){
                     String token = authHeader.substring(7);
-                    Integer userid = JwtUtil.getUserId(token);
+                    UUID userid = JwtUtil.getUserId(token);
 
                     if(userid != null){
                         UsernamePasswordAuthenticationToken authentication =
