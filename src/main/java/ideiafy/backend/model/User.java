@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -17,9 +18,10 @@ import java.util.List;
 @Builder
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
+    @Column(nullable = false)
     private String name;
 
     @Column(unique = true, nullable = false)
@@ -28,6 +30,9 @@ public class User {
     @Column(nullable = false)
     @JsonIgnore
     private String password;
+
+    @Column(nullable = true)
+    private String image;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore

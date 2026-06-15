@@ -7,11 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 public class PostController {
@@ -32,12 +31,12 @@ public class PostController {
         return service.createPost(input);
     }
     @MutationMapping
-    public Post updatePost(@Argument Integer id,
+    public Post updatePost(@Argument UUID id,
                         @Argument PostInput input){
         return service.updatePost(id,input);
     }
     @MutationMapping
-    public Boolean deletePost(@Argument Integer id){
+    public Boolean deletePost(@Argument UUID id){
         service.deletePost(id);
         return true;
     }

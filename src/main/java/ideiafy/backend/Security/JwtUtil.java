@@ -5,27 +5,30 @@ import com.auth0.jwt.algorithms.Algorithm;
 
 
 import java.util.Date;
+import java.util.UUID;
 
 public class JwtUtil {
     private static final String SECRET = "secret_my_key_guh";
 
-    public static String generateToken(Integer userId, String email){
+
+    public static String generateToken(UUID userId, String email){
         return JWT.create()
                 .withSubject(email)
-                .withClaim("id",userId)
+                .withClaim("id", userId.toString())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .sign(Algorithm.HMAC256(SECRET));
     }
 
-    public static Integer getUserId(String token) {
+    public static UUID getUserId(String token) {
         try {
-            return JWT.require(Algorithm.HMAC256(SECRET))
+            String id = JWT.require(Algorithm.HMAC256(SECRET))
                     .build()
                     .verify(token)
                     .getClaim("id")
-                    .asInt();
+                    .asString();
+
+            return UUID.fromString(id);
         } catch (Exception e) {
-            System.out.println("Invalid Token" + e.getMessage());
             return null;
         }
     }

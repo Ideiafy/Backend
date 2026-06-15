@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -16,8 +17,8 @@ import java.util.List;
 @Builder
 public class Post {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(
@@ -26,10 +27,25 @@ public class Post {
     )
     private User user;
 
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
     private String description;
+
     @ElementCollection
+    @CollectionTable(
+            name = "post_comments",
+            joinColumns = @JoinColumn(name = "post_id")
+    )
+    @Column(name = "comment")
     private List<String> comment;
+
     @ElementCollection
+    @CollectionTable(
+            name = "post_images",
+            joinColumns = @JoinColumn(name = "post_id")
+    )
+    @Column(name = "images")
     private List<String> images;
 }

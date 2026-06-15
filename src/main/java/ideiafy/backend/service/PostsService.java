@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class PostsService {
@@ -34,7 +35,7 @@ public class PostsService {
         post.setUser(user);
         return repository.save(post);
     }
-    public void deletePost(Integer id){
+    public void deletePost(UUID id){
         Post post = repository.findById(id).orElseThrow(()->
                 new RuntimeException("Post not found"));
 
@@ -43,7 +44,7 @@ public class PostsService {
         }
         repository.delete(post);
     }
-    public Post updatePost(Integer id, PostInput input){
+    public Post updatePost(UUID id, PostInput input){
         Post post = repository.findById(id).orElseThrow(()->
                 new RuntimeException("Post not found"));
         if(!post.getUser().getId().equals(findUserId())){
@@ -68,7 +69,7 @@ public class PostsService {
                 .images(input.images())
                 .build();
     }
-    private Integer findUserId(){
+    private UUID findUserId(){
         return SecurityUtils.getAuthenticationUserId();
     }
 
