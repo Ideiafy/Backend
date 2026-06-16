@@ -6,11 +6,11 @@ type User {
 
 type Post {
     id: ID!
-    title: String
-    description: String
+    title: String!
+    description: String!
     comment: [String]
     images: [String]
-    user: User
+    user: User!
 }
 
 input UserInput {
@@ -31,9 +31,13 @@ input ChangePasswordInput {
 
 input PostInput {
     title: String!
-    description: String
+    description: String!
     comment: [String]
     images: [String]
+}
+input VerifyCodeInput{
+    email: String!
+    code: String!
 }
 
 type Query {
@@ -47,6 +51,7 @@ type Query {
 type Mutation {
     createUser(input: UserInput!): User
     login(input: LoginInput!): String
+    verifyCode(input: VerifyCodeInput!): String
 
     updateUser(input: ChangePasswordInput!): Boolean
     deleteUser: Boolean

@@ -1,5 +1,7 @@
 package ideiafy.backend.service;
 
+import ideiafy.backend.Inputs.VerifyCodeInput;
+import ideiafy.backend.Repository.TwoFactorRepository;
 import ideiafy.backend.Repository.UserRepository;
 import ideiafy.backend.Security.JwtUtil;
 import ideiafy.backend.Security.SecurityUtils;
@@ -22,6 +24,9 @@ public class UserService {
 
     @Autowired
     BCryptPasswordEncoder encoder;
+
+    @Autowired
+    TwoFactorService twoFactorService;
 
     public List<User> getAllUsers(){
         return repository.findAll();
@@ -68,8 +73,10 @@ public class UserService {
                     "Wrong Password"
             );
         }
-        return JwtUtil.generateToken(user.getId(),user.getEmail());
+        twoFactorService.createCode(user.getEmail());
+        return "Code Sent";
     }
+
 
     private User toEntity(UserInput input){
         return User.builder()
