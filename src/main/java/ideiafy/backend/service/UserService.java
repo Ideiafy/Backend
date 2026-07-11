@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -27,6 +28,9 @@ public class UserService {
 
     @Autowired
     TwoFactorService twoFactorService;
+
+    @Autowired
+    DeleteService deleteService;
 
 
     public List<User> getAllUsers(){
@@ -51,8 +55,10 @@ public class UserService {
     public boolean deleteUser(){
         User user = repository.findById(SecurityUtils.getAuthenticationUserId()).orElseThrow(()->
                 new RuntimeException("User not found"));
+        user.setActive(false);
+        repository.save(user);
+        deleteService.permanentDelete(user.getId());
 
-        repository.delete(user);
         return true;
     }
     public String generatePasswordReset(){
