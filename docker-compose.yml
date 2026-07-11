@@ -5,9 +5,24 @@ services:
     image: bitnami/postgresql:latest
     ports:
       - '5434:5432'
+    environment:
+      POSTGRES_USERNAME: teste
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DATABASE: backend
+
     volumes:
       - polls_pg_data:/bitnami/postgresql
+  redis:
+    image: redis:latest
+    container_name: redis-backend
+    ports:
+      - "6379:6379"
+    command: redis-server
+    volumes:
+      - redis_data:/data
+
 
 
 volumes:
   polls_pg_data:
+  redis_data:

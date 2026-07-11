@@ -2,15 +2,16 @@ type User {
     id: ID!
     name: String!
     email: String!
+    image: String
 }
 
 type Post {
     id: ID!
-    title: String
-    description: String
+    title: String!
+    description: String!
     comment: [String]
     images: [String]
-    user: User
+    user: User!
 }
 
 input UserInput {
@@ -31,9 +32,14 @@ input ChangePasswordInput {
 
 input PostInput {
     title: String!
-    description: String
+    description: String!
     comment: [String]
     images: [String]
+}
+
+input VerifyCodeInput {
+    email: String!
+    code: String!
 }
 
 type Query {
@@ -45,17 +51,39 @@ type Query {
 }
 
 type Mutation {
-    createUser(input: UserInput!): User
-    login(input: LoginInput!): String
 
-    updateUser(input: ChangePasswordInput!): Boolean
+    generateActivateUserCode(
+        input: UserInput!
+    ): String
+
+    login(
+        input: LoginInput!
+    ): String
+
+    activateUser(
+        email: String!
+        code: String!
+    ): Boolean
+
+    generatePasswordResetCode: String
+
+    changePassword(
+        email: String!
+        code: String!
+        input: ChangePasswordInput!
+    ): Boolean
+
     deleteUser: Boolean
 
-    createPost(input: PostInput!): Post
+    createPost(
+        input: PostInput!
+    ): Post
+
     updatePost(
         id: ID!
         input: PostInput!
     ): Post
+
     deletePost(
         id: ID!
     ): Boolean
