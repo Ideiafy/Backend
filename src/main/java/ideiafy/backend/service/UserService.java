@@ -1,13 +1,13 @@
 package ideiafy.backend.service;
 
-import ideiafy.backend.Inputs.VerifyCodeInput;
-import ideiafy.backend.Repository.TwoFactorRepository;
 import ideiafy.backend.Repository.UserRepository;
 import ideiafy.backend.Security.JwtUtil;
 import ideiafy.backend.Security.SecurityUtils;
 import ideiafy.backend.Inputs.ChangePasswordInput;
 import ideiafy.backend.Inputs.LoginInput;
 import ideiafy.backend.Inputs.UserInput;
+import ideiafy.backend.model.Status;
+import ideiafy.backend.model.TwoFactorType;
 import ideiafy.backend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +28,7 @@ public class UserService {
     @Autowired
     TwoFactorService twoFactorService;
 
+
     public List<User> getAllUsers(){
         return repository.findAll();
     }
@@ -36,22 +37,46 @@ public class UserService {
                 new RuntimeException("User not found"));
         return user;
     }
-    public User createUser(UserInput input){
-        User userExists = repository.findByEmail(input.email());
+    public String generateActivateUserCode(UserInput input){
+        User user = repository.findByEmail(input.email());
 
-        if(userExists != null){
+        if(user != null){
             throw new RuntimeException("Email Already registered");
         }
-
-        return repository.save(toEntity(input));
+        repository.save(toEntity(input));
+        twoFactorService.generateCode(input.email(), TwoFactorType.ACTIVATION);
+        return "Code sent";
     }
-    public void deleteUser(){
+
+    public boolean deleteUser(){
         User user = repository.findById(SecurityUtils.getAuthenticationUserId()).orElseThrow(()->
                 new RuntimeException("User not found"));
 
         repository.delete(user);
+        return true;
     }
-    public void changePassword(ChangePasswordInput input){
+    public String generatePasswordReset(){
+        User user = repository.findById(SecurityUtils.getAuthenticationUserId()).orElseThrow(()->
+                new RuntimeException("User not found"));
+        twoFactorService.generateCode(user.getEmail(), TwoFactorType.PASSWORD_RESET);
+        return "Code sent";
+    }
+    public boolean activateUser(String email,String code){
+        if(!twoFactorService.validateCode(email,code, TwoFactorType.ACTIVATION)){
+            throw new RuntimeException("Invalid Code");
+        }
+        User user = repository.findByEmail(email);
+        if(user == null){
+            throw new RuntimeException("User not found");
+        }
+        user.setStatus(Status.FINISHED);
+        repository.save(user);
+        return true;
+    }
+    public boolean changePassword(String email, String code, ChangePasswordInput input){
+        if(!twoFactorService.validateCode(email,code, TwoFactorType.PASSWORD_RESET)){
+            throw new RuntimeException("Invalid code");
+        }
         User user = repository.findById(SecurityUtils.getAuthenticationUserId()).orElseThrow(()->
                 new RuntimeException("User not found"));
         if(!encoder.matches(input.oldPassword(), user.getPassword())){
@@ -61,6 +86,7 @@ public class UserService {
         }
         user.setPassword(encoder.encode(input.newPassword()));
         repository.save(user);
+        return true;
     }
     public String login(LoginInput input){
         User user = repository.findByEmail(input.email());
@@ -73,8 +99,7 @@ public class UserService {
                     "Wrong Password"
             );
         }
-        twoFactorService.createCode(user.getEmail());
-        return "Code Sent";
+        return JwtUtil.generateToken(user.getId(),user.getEmail());
     }
 
 

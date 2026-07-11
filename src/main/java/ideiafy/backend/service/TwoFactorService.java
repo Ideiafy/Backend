@@ -1,72 +1,59 @@
 package ideiafy.backend.service;
 
-import ideiafy.backend.Inputs.VerifyCodeInput;
-import ideiafy.backend.Repository.TwoFactorRepository;
+import ideiafy.backend.Inputs.ChangePasswordInput;
 import ideiafy.backend.Repository.UserRepository;
-import ideiafy.backend.Security.JwtUtil;
-import ideiafy.backend.model.TwoFactor;
+import ideiafy.backend.Security.SecurityUtils;
+import ideiafy.backend.model.Status;
+import ideiafy.backend.model.TwoFactorType;
 import ideiafy.backend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
-import java.util.Random;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class TwoFactorService {
+
     @Autowired
-    TwoFactorRepository repository;
-    @Autowired
-    UserRepository userRepository;
+    EmailService emailService;
 
     private final SecureRandom random = new SecureRandom();
 
-    private String generateCode(){
-        return String.format(
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    private String buildKey(String email, TwoFactorType type){
+        return type.name() + ":" + email;
+    }
+
+    public void generateCode(String email, TwoFactorType type){
+        String code = String.format(
                 "%06d",
                 random.nextInt(1000000)
         );
-    }
-    public void createCode(String email){
-        TwoFactor oldCode = repository.findByEmail(email);
-
-        if(oldCode!= null){
-            repository.delete(oldCode);
-        }
-
-        String code = generateCode();
-
-        TwoFactor twoFactor = new TwoFactor();
-        twoFactor.setEmail(email);
-        twoFactor.setCode(code);
-        twoFactor.setExpireAt(
-                LocalDateTime.now().plusMinutes(5)
+        redisTemplate.opsForValue().set(
+                buildKey(email,type),
+                code,
+                5,
+                TimeUnit.MINUTES
         );
-
-        repository.save(twoFactor);
+        emailService.sendCode(email,code, type);
     }
-    public String verifyCode(VerifyCodeInput input){
-        TwoFactor savedCode = repository.findByEmail(input.email());
-        if(savedCode == null){
-            throw new RuntimeException("Code not found");
-        }
-        if(savedCode.getExpireAt().isBefore(LocalDateTime.now())){
-            repository.delete(savedCode);
-            throw new RuntimeException("Expired Code");
-        }
-        if(!savedCode.getCode().equals(input.code())){
-            throw new RuntimeException("Wrong Code");
-        }
 
-        User user = userRepository.findByEmail(input.email());
-
-        if(user == null){
-            throw new RuntimeException("User not found");
+    public boolean validateCode(String email,String code, TwoFactorType type){
+        String getCode = redisTemplate.opsForValue().get(buildKey(email,type));
+        boolean valid = Objects.equals(getCode,code);
+        if(valid){
+            redisTemplate.delete(buildKey(email, type));
         }
-        repository.delete(savedCode);
-        return JwtUtil.generateToken(user.getId(),user.getEmail());
+        return valid;
     }
+
 
 }

@@ -25,11 +25,6 @@ public class UserController {
         return service.getMyUser();
     }
     @MutationMapping
-    public Boolean updateUser(@Argument ChangePasswordInput input){
-        service.changePassword(input);
-        return true;
-    }
-    @MutationMapping
     public Boolean deleteUser(){
         service.deleteUser();
         return true;

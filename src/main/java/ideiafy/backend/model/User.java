@@ -38,5 +38,9 @@ public class User {
     @JsonIgnore
     private List<Post> posts;
 
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status = Status.PENDING;
 
 }
