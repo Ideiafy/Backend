@@ -1,17 +1,10 @@
-package ideiafy.backend.service;
+package ideiafy.backend.service.auth;
 
-import ideiafy.backend.Inputs.ChangePasswordInput;
-import ideiafy.backend.Repository.UserRepository;
-import ideiafy.backend.Security.SecurityUtils;
-import ideiafy.backend.model.Status;
 import ideiafy.backend.model.TwoFactorType;
-import ideiafy.backend.model.User;
+import ideiafy.backend.service.email.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
 import java.util.Objects;

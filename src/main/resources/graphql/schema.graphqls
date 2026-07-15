@@ -2,6 +2,7 @@ type User {
     id: ID!
     name: String!
     email: String!
+    active: Boolean!
     image: String
 }
 
