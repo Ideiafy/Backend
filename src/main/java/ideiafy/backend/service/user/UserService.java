@@ -1,4 +1,4 @@
-package ideiafy.backend.service;
+package ideiafy.backend.service.user;
 
 import ideiafy.backend.Repository.UserRepository;
 import ideiafy.backend.Security.JwtUtil;
@@ -9,6 +9,9 @@ import ideiafy.backend.Inputs.UserInput;
 import ideiafy.backend.model.Status;
 import ideiafy.backend.model.TwoFactorType;
 import ideiafy.backend.model.User;
+import ideiafy.backend.service.delete.DeleteService;
+import ideiafy.backend.service.auth.AuthenticationService;
+import ideiafy.backend.service.auth.TwoFactorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class UserService {
@@ -32,14 +34,15 @@ public class UserService {
     @Autowired
     DeleteService deleteService;
 
+    @Autowired
+    AuthenticationService authenticationService;
+
 
     public List<User> getAllUsers(){
         return repository.findAll();
     }
     public User getMyUser(){
-        User user = repository.findById(SecurityUtils.getAuthenticationUserId()).orElseThrow(()->
-                new RuntimeException("User not found"));
-        return user;
+        return authenticationService.getCurrentUser();
     }
     public String generateActivateUserCode(UserInput input){
         User user = repository.findByEmail(input.email());
@@ -53,8 +56,7 @@ public class UserService {
     }
 
     public boolean deleteUser(){
-        User user = repository.findById(SecurityUtils.getAuthenticationUserId()).orElseThrow(()->
-                new RuntimeException("User not found"));
+        User user = authenticationService.getCurrentUser();
         user.setActive(false);
         repository.save(user);
         deleteService.permanentDelete(user.getId());
@@ -62,8 +64,7 @@ public class UserService {
         return true;
     }
     public String generatePasswordReset(){
-        User user = repository.findById(SecurityUtils.getAuthenticationUserId()).orElseThrow(()->
-                new RuntimeException("User not found"));
+        User user = authenticationService.getCurrentUser();
         twoFactorService.generateCode(user.getEmail(), TwoFactorType.PASSWORD_RESET);
         return "Code sent";
     }

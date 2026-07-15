@@ -1,4 +1,4 @@
-package ideiafy.backend.service;
+package ideiafy.backend.service.post;
 
 import ideiafy.backend.Repository.PostsRepository;
 import ideiafy.backend.Repository.UserRepository;
@@ -6,6 +6,7 @@ import ideiafy.backend.Security.SecurityUtils;
 import ideiafy.backend.Inputs.PostInput;
 import ideiafy.backend.model.Post;
 import ideiafy.backend.model.User;
+import ideiafy.backend.service.auth.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +14,15 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class PostsService {
+public class PostService {
     @Autowired
     PostsRepository repository;
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    AuthenticationService authenticationService;
 
     public List<Post> getMyPosts(){
         return repository.findByUserId(findUserId());
@@ -28,8 +32,7 @@ public class PostsService {
         return repository.findAll();
     }
     public Post createPost(PostInput input){
-        User user = userRepository.findById(findUserId()).orElseThrow(()->
-                new RuntimeException("User not found"));
+       User user = authenticationService.getCurrentUser();
 
         Post post = toEntity(input);
         post.setUser(user);

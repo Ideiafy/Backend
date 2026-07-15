@@ -1,4 +1,4 @@
-package ideiafy.backend.service;
+package ideiafy.backend.service.email;
 
 import ideiafy.backend.model.TwoFactorType;
 import org.springframework.beans.factory.annotation.Autowired;

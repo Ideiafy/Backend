@@ -2,7 +2,7 @@ package ideiafy.backend.controller;
 
 import ideiafy.backend.Inputs.PostInput;
 import ideiafy.backend.model.Post;
-import ideiafy.backend.service.PostsService;
+import ideiafy.backend.service.post.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @Controller
 public class PostController {
     @Autowired
-    PostsService service;
+    PostService service;
 
     @QueryMapping
     public List<Post> myPosts(){

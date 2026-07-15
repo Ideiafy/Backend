@@ -1,14 +1,11 @@
-package ideiafy.backend.service.queue;
+package ideiafy.backend.service.delete.jobs;
 
 import ideiafy.backend.Repository.UserRepository;
-import ideiafy.backend.service.DeleteService;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
-
-import static jakarta.persistence.GenerationType.UUID;
 
 public class PermanentDeleteJob implements Job {
 
