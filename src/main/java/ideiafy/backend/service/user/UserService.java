@@ -23,19 +23,19 @@ import java.util.List;
 @Service
 public class UserService {
     @Autowired
-    UserRepository repository;
+    private UserRepository repository;
 
     @Autowired
-    BCryptPasswordEncoder encoder;
+    private BCryptPasswordEncoder encoder;
 
     @Autowired
-    TwoFactorService twoFactorService;
+    private TwoFactorService twoFactorService;
 
     @Autowired
-    DeleteService deleteService;
+    private DeleteService deleteService;
 
     @Autowired
-    AuthenticationService authenticationService;
+    private AuthenticationService authenticationService;
 
 
     public List<User> getAllUsers(){

@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class TwoFactorService {
 
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
 
     private final SecureRandom random = new SecureRandom();
 

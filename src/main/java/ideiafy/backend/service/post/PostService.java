@@ -16,13 +16,13 @@ import java.util.UUID;
 @Service
 public class PostService {
     @Autowired
-    PostsRepository repository;
+    private PostsRepository repository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    AuthenticationService authenticationService;
+    private AuthenticationService authenticationService;
 
     public List<Post> getMyPosts(){
         return repository.findByUserId(findUserId());
@@ -61,14 +61,12 @@ public class PostService {
     private void setPost(Post post, PostInput input){
         post.setTitle(input.title());
         post.setDescription(input.description());
-        post.setComment(input.comment());
         post.setImages(input.images());
     }
     private Post toEntity(PostInput input){
         return Post.builder()
                 .title(input.title())
                 .description(input.description())
-                .comment(input.comment())
                 .images(input.images())
                 .build();
     }

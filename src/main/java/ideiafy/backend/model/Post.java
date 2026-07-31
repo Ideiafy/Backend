@@ -33,13 +33,6 @@ public class Post {
     @Column(nullable = false)
     private String description;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "post_comments",
-            joinColumns = @JoinColumn(name = "post_id")
-    )
-    @Column(name = "comment")
-    private List<String> comment;
 
     @ElementCollection
     @CollectionTable(
