@@ -1,4 +1,4 @@
-package ideiafy.backend.service.delete.jobs;
+package ideiafy.backend.service.scheduler.jobs;
 
 import ideiafy.backend.Repository.UserRepository;
 import org.quartz.Job;

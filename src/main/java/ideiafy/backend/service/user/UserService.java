@@ -9,7 +9,7 @@ import ideiafy.backend.Inputs.UserInput;
 import ideiafy.backend.model.Status;
 import ideiafy.backend.model.TwoFactorType;
 import ideiafy.backend.model.User;
-import ideiafy.backend.service.delete.DeleteService;
+import ideiafy.backend.service.scheduler.DeleteService;
 import ideiafy.backend.service.auth.AuthenticationService;
 import ideiafy.backend.service.auth.TwoFactorService;
 import org.springframework.beans.factory.annotation.Autowired;

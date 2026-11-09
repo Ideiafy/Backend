@@ -13,9 +13,9 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class AuthController {
     @Autowired
-    UserService service;
+    private UserService service;
     @Autowired
-    TwoFactorService twoFactorService;
+    private TwoFactorService twoFactorService;
 
     @MutationMapping
     public String generateActivateUserCode(@Argument UserInput input){

@@ -1,7 +1,7 @@
-package ideiafy.backend.service.delete;
+package ideiafy.backend.service.scheduler;
 
 import ideiafy.backend.Repository.UserRepository;
-import ideiafy.backend.service.delete.jobs.PermanentDeleteJob;
+import ideiafy.backend.service.scheduler.jobs.PermanentDeleteJob;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

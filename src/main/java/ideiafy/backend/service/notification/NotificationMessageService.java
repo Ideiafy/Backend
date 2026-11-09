@@ -11,10 +11,10 @@
                         senderName + " started follow you.";
 
                 case LIKE ->
-                        senderName + " liked your post \"" + postTitle + "\".";
+                        senderName + " liked your post " + postTitle +  ".";
 
                 case COMMENT ->
-                        senderName + " comment in your post \"" + postTitle + "\".";
+                        senderName + " comment in your post " + postTitle + ".";
             };
         }
     }

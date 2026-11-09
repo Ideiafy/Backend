@@ -12,7 +12,7 @@ import java.util.List;
 @Controller
 public class UserController {
     @Autowired
-    UserService service;
+    private UserService service;
 
     @QueryMapping
     public List<User> users(){

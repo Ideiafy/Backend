@@ -15,7 +15,7 @@ import java.util.UUID;
 @Controller
 public class PostController {
     @Autowired
-    PostService service;
+    private PostService service;
 
     @QueryMapping
     public List<Post> myPosts(){

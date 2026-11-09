@@ -13,6 +13,7 @@ type Post {
     images: [String]
     user: User!
 }
+
 type Notification {
     id: ID!
     receiver: User!
@@ -24,11 +25,34 @@ type Notification {
     createdAt: String!
 }
 
+type Like {
+    id: ID!
+    user: User!
+    post: Post!
+    createdAt: String!
+}
+
+type Comment {
+    id: ID!
+    user: User!
+    post: Post!
+    content: String!
+    createdAt: String!
+}
+
+type Follow {
+    id: ID!
+    follower: User!
+    following: User!
+    createdAt: String!
+}
+
 enum NotificationType {
     FOLLOW
     LIKE
     COMMENT
 }
+
 input UserInput {
     name: String!
     email: String!
@@ -48,7 +72,6 @@ input ChangePasswordInput {
 input PostInput {
     title: String!
     description: String!
-    comment: [String]
     images: [String]
 }
 
@@ -63,6 +86,24 @@ type Query {
 
     myPosts: [Post]
     posts: [Post]
+
+    myNotifications: [Notification]
+
+    countByFollowing(
+        followingId: ID!
+    ): Int!
+
+    countByFollower(
+        followerId: ID!
+    ): Int!
+
+    viewComments(
+        postId: ID!
+    ): [Comment]!
+
+    countLikeByPost(
+        postId: ID!
+    ): Int!
 }
 
 type Mutation {
@@ -102,4 +143,29 @@ type Mutation {
     deletePost(
         id: ID!
     ): Boolean
+
+    toggleLike(
+        postId: ID!
+    ): Boolean!
+
+    toggleFollow(
+        followingId: ID!
+    ): Boolean!
+
+    markNotificationAsRead(
+        id: ID!
+    ): Boolean!
+
+    deleteNotification(
+        id: ID!
+    ): Boolean!
+
+    createComment(
+        postId: ID!
+        content: String!
+    ): Comment!
+
+    deleteComment(
+        id: ID!
+    ): Boolean!
 }

@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface FollowRepository extends JpaRepository<Follow, UUID> {
-    boolean existByFollowerAndFollowing(User follower, User Following);
+    boolean existsByFollowerAndFollowing(User follower, User Following);
     Optional<Follow> findByFollowerAndFollowing(User follower, User following);
     long countByFollower(User follower);
     long countByFollowing(User following);

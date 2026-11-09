@@ -36,6 +36,9 @@ public class Notification {
     @Enumerated(EnumType.STRING)
     private NotificationType type;
 
+    @Column(nullable = false)
+    private String body;
+
     private Boolean read = false;
 
     @Builder.Default
